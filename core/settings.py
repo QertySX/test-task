@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('django_secret_key')
 
-DEBUG = os.getenv('DUBUG', default=False)
+DEBUG = os.getenv('DEBUG', default=False)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='').split(',')
 
@@ -115,15 +115,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
-    "DEFAULT_PERMISSIONS_CLASSES": [
-        "rest_framework_permissions.AllowAny" # Разрешить доступ
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny" # Разрешить доступ
     ],
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle", # Ограничение запросов для анонимных пользователей
     ],
-    'DEFAULT_THROTTLE_RATES': [
-        "anon': '100/hour", # Лимит запросов для анонимных пользователей
-    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/hour",  # лимит запросов для анонимных пользователей
+    },
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer", #Рендеринг в JSON
     ],
