@@ -69,6 +69,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+# ДБ конфиг
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -81,6 +82,18 @@ DATABASES = {
         },
     }
 }
+
+# Редис конфиг
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -115,6 +128,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,
+    # Разрешения по умолчанию (кто может обращаться к API)
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny" # Разрешить доступ
     ],
@@ -124,11 +138,14 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "100/hour",  # лимит запросов для анонимных пользователей
     },
+    # Рендерер — в каком формате API возвращает ответ
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer", #Рендеринг в JSON
     ],
+    # Парсеры — какие типы входящих данных API умеет принимать
     "DEFAULT_PARSER_CLASSES": [
-        "rest_framework.parsers.JSONParser", # Парсинг JSON данных
+        "rest_framework.parsers.JSONParser", # Принимает application/json
+        "rest_framework.parsers.MultiPartParser", # Принимает multipart/form-data
     ],
 }
 
