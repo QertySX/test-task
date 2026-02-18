@@ -1,33 +1,43 @@
 # Сериализаторы для модели Comments
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.core.files.base import ContentFile
-
-from captcha.serializers import CaptchaSerializer
-import sys
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from .models import Comment
-
 import re
-import bleach
-from PIL import Image
+import sys
 from io import BytesIO
 
+import bleach
+from captcha.serializers import CaptchaSerializer
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from PIL import Image
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
-ALLOWED_TAGS = ['a', 'code', 'i', 'strong']
-ALLOWED_ATTRIBUTES = {'a': ['href', 'title']}
+from .models import Comment
+
+ALLOWED_TAGS = ["a", "code", "i", "strong"]
+ALLOWED_ATTRIBUTES = {"a": ["href", "title"]}
+
 
 class CommentsSerializer(serializers.ModelSerializer):
     # Базовый сериализатор для модели Comment
     class Meta:
         model = Comment
-        fields = ['id', 'parent', 'username', 'email', 'homepage', 'text', 'image', 'file', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = [
+            "id",
+            "parent",
+            "username",
+            "email",
+            "homepage",
+            "text",
+            "image",
+            "file",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
 
     def validate_username(self, value):
         # только латиница и цифры
-        if not re.match(r'^[a-zA-Z0-9]+$', value):
+        if not re.match(r"^[a-zA-Z0-9]+$", value):
             raise serializers.ValidationError(
                 "Username может содержать только латинские буквы и цифры"
             )
@@ -36,10 +46,7 @@ class CommentsSerializer(serializers.ModelSerializer):
     def validate_text(self, value):
         # очистка текста от запрещённых тегов
         cleaned = bleach.clean(
-            value,
-            tags=ALLOWED_TAGS,
-            attributes=ALLOWED_ATTRIBUTES,
-            strip=True
+            value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True
         )
         return cleaned
 
@@ -48,13 +55,12 @@ class CommentsSerializer(serializers.ModelSerializer):
         max_size = 100 * 1024
         if value.size > max_size:
             raise serializers.ValidationError("Файл слишком большой")
-        
-        if value.content_type != 'text/plain':
-            raise serializers.ValidationError("Разрешены только текстовые файлы (MIME: text/plain).")
 
-        if not value.name.lower().endswith('.txt'):
-            raise serializers.ValidationError("Файл слишком большой")
-            
+        if value.content_type != "text/plain":
+            raise serializers.ValidationError(
+                "Разрешены только текстовые файлы (MIME: text/plain)."
+            )
+
         return value
 
     def validate_image(self, value):
@@ -67,9 +73,7 @@ class CommentsSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Некорректное изображение")
 
         if img.format not in ["JPEG", "PNG", "GIF"]:
-            raise serializers.ValidationError(
-                "Допустимые форматы: JPG, PNG, GIF"
-            )
+            raise serializers.ValidationError("Допустимые форматы: JPG, PNG, GIF")
 
         max_width, max_height = 320, 240
 
@@ -90,7 +94,6 @@ class CommentsSerializer(serializers.ModelSerializer):
                 charset=None,
             )
         return value
-
 
 
 class CheckCaptchaSerializer(CaptchaSerializer):
