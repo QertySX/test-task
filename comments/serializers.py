@@ -1,16 +1,13 @@
 # Сериализаторы для модели Comments
 
 import re
-import sys
 from io import BytesIO
 
 import bleach
 from captcha.serializers import CaptchaSerializer
-from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from .models import Comment
 
@@ -19,7 +16,7 @@ ALLOWED_ATTRIBUTES = {"a": ["href", "title"]}
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    # Базовый сериализатор для модели Comment
+    # Сериализатор для модели Comment
     class Meta:
         model = Comment
         fields = [
@@ -36,10 +33,10 @@ class CommentsSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "created_at"]
 
     def validate_username(self, value):
-        # только латиница и цифры
-        if not re.match(r"^[a-zA-Z0-9]+$", value):
+        # Допускается только латиница и цифры
+        if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]+$", value):
             raise serializers.ValidationError(
-                "Username может содержать только латинские буквы и цифры"
+                "username может содержать только латинские буквы и цифры"
             )
         return value
 
@@ -48,10 +45,16 @@ class CommentsSerializer(serializers.ModelSerializer):
         cleaned = bleach.clean(
             value, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True
         )
+
+        if cleaned != value:
+            raise serializers.ValidationError(
+                "Комментарий содержит запрещённые HTML-теги"
+            )
+
         return cleaned
 
     def validate_file(self, value):
-        # Проверка размера
+        # Проверка типа и размера файла
         max_size = 100 * 1024
         if value.size > max_size:
             raise serializers.ValidationError("Файл слишком большой")
@@ -64,6 +67,7 @@ class CommentsSerializer(serializers.ModelSerializer):
         return value
 
     def validate_image(self, value):
+        # Проверка типа изображения и конвертация к нужному размеру
         if not value:
             return value
 
@@ -97,4 +101,5 @@ class CommentsSerializer(serializers.ModelSerializer):
 
 
 class CheckCaptchaSerializer(CaptchaSerializer):
+    # Капча для POST запроса
     pass
