@@ -102,4 +102,5 @@ class CommentsSerializer(serializers.ModelSerializer):
 
 class CheckCaptchaSerializer(CaptchaSerializer):
     # Капча для POST запроса
+    # Выодает 2 параметра: captcha_hashkey и captcha_code
     pass
