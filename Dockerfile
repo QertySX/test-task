@@ -7,9 +7,16 @@ WORKDIR /app
 # Копируем файл зависимостей
 COPY requirements.txt .
 
-# Устанавливаем зависимости системы, необходимые для MySQL
 RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev build-essential \
+    build-essential \          
+    default-libmysqlclient-dev \ 
+    pkg-config \             
+    libssl-dev \             
+    libffi-dev \          
+    python3-dev \            
+    git \               
+    curl \                  
+    locales \                
     && rm -rf /var/lib/apt/lists/*
 
 # Устанавливаем зависимости Python
