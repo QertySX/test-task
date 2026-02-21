@@ -1,58 +1,97 @@
-Test Task — Django Rest Framework + MySQL 
 
-Стек технологий
 
-- Python 3.12+
+# Test Task - Django REST Framework + MySQL
 
-- Django
+## Стек технологий
 
-- MySQL 8
+* Python 3.12+
+* Django
+* MySQL 8
+* Docker
+* Docker Compose
 
-- Docker
+---
 
-- Docker Compose
+## Описание проекта
 
-Описание
+Проект предоставляет API для работы с комментариями:
 
-- Возвращает список всех комментариев верхнего уровня
-- Поддерживается пагинация
-- Поддерживается сортировка по: username, email, created_at
+* Возвращает список всех комментариев верхнего уровня
+* Поддерживает пагинацию
+* Поддерживает сортировку по полям: `username`, `email`, `created_at`
 
-Быстрый старт
+---
 
-- git clone https://github.com/QertySX/test_task.git
-- cd test_task
+## Быстрый старт
 
-- cp .env.example .env
+1. Клонируем репозиторий:
 
-- Пример .env
+```bash
+git clone https://github.com/QertySX/test-task.git
+cd test-task
+```
 
-django_secret_key ='Ваш секретный ключ' 
+2. Создаём файл окружения:
 
-NAME='Ваше имя бд'
+```bash
+cp .env.example .env
+```
+
+3. Пример содержимого `.env`:
+
+```env
+DJANGO_SECRET_KEY='ваш_секретный_ключ'
+NAME='имя_бд'
 HOST='127.0.0.1'
-mysql_password='Ваш пароль'
-
+MYSQL_PASSWORD='ваш_пароль'
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
+```
 
-- DJANGO_SECRET_KEY можно сгенерировать через Python
+> секретный ключ можно сгенерировать в Python:
 
+```
 from django.core.management.utils import get_random_secret_key
-
 print(get_random_secret_key())
+```
 
-Сборка и запуск контейнеров
+---
 
-- docker compose up --build
+## Сборка и запуск контейнеров
 
+### Для Docker Compose v2 (плагин):
 
-Применение миграций
+```bash
+docker compose build
+docker compose up
+```
 
-- docker compose exec web python manage.py migrate
+### Для старого docker-compose:
 
-Переходим по url в браузере или Postman
+```bash
+docker-compose build
+docker-compose up
+```
 
-- http://127.0.0.1:8000/api/v1/comments/
+---
 
+## Применение миграций
+
+```bash
+docker compose exec web python manage.py migrate
+```
+
+---
+
+## Тестирование API
+
+После запуска контейнеров, API доступно по адресу:
+
+```
+http://127.0.0.1:8000/api/v1/comments/
+```
+
+Можно использовать **Postman**, **curl** или браузер.
+
+---
 
