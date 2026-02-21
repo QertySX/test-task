@@ -1,6 +1,7 @@
 asgiref==3.11.1
 bleach==6.3.0
 Django==6.0.2
+gunicorn
 django-cors-headers==4.9.0
 django-ranged-response==0.2.0
 django-simple-captcha==0.6.3
