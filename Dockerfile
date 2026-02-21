@@ -26,5 +26,5 @@ RUN pip install -r requirements.txt
 # Копируем весь проект
 COPY . .
 
-# Запуск Gunicorn)
-CMD ["gunicorn", "root.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Запуск Gunicorn
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
